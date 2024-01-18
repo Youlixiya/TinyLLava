@@ -34,9 +34,9 @@
 #     --lazy_preprocess True \
 #     --report_to wandb
 
-deepspeed --include "localhost:2,3,4,5" llava/train/train_mem.py \
+deepspeed --include "localhost:2,3,4,5" llava/train/train.py \
     --deepspeed ./scripts/zero2.json \
-    --model_name_or_path TinyLlama/TinyLlama-1.1B-Chat-v1.0 \
+    --model_name_or_path TinyLlama/TinyLlama-1.1B-Chat-V1.0 \
     --version plain \
     --data_path ./playground/data/LLaVA-Pretrain/blip_laion_cc_sbu_558k.json \
     --image_folder ./playground/data/LLaVA-Pretrain/images \

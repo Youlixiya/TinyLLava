@@ -18,11 +18,14 @@ from functools import partial
 from llava.constants import WORKER_HEART_BEAT_INTERVAL
 from llava.utils import (build_logger, server_error_msg,
     pretty_print_semaphore)
+from llava.model.language_model.llava_llama import LlavaConfig
 from llava.model.builder import load_pretrained_model
 from llava.mm_utils import process_images, load_image_from_base64, tokenizer_image_token, KeywordsStoppingCriteria
 from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
-from transformers import TextIteratorStreamer
+from transformers import TextIteratorStreamer, AutoConfig
 from threading import Thread
+
+AutoConfig.register('llava', LlavaConfig)
 
 
 GB = 1 << 30
