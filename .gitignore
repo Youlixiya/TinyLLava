@@ -41,3 +41,4 @@ playground/data/ocr_vqa
 playground/data/textvqa
 playground/data/vg
 playground/data/llava_v1_5_mix665k.json
+*.pt
