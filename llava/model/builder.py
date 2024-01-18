@@ -40,7 +40,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             bnb_4bit_quant_type='nf4'
         )
     else:
-        kwargs['torch_dtype'] = torch.float16
+        kwargs['torch_dtype'] = torch.bffloat16
 
     if 'llava' in model_name.lower():
         # Load LLaVA model
