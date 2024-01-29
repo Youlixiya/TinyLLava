@@ -36,6 +36,9 @@ class LlavaOPTModel(LlavaMetaModel, OPTModel):
 
     def __init__(self, config: OPTConfig):
         super(LlavaOPTModel, self).__init__(config)
+    
+    def embed_tokens(self, x):
+        return self.decoder.embed_tokens(x)
 
 
 class LlavaOPTForCausalLM(OPTForCausalLM, LlavaMetaForCausalLM):
