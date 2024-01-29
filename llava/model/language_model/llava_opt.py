@@ -35,11 +35,7 @@ class LlavaOPTModel(LlavaMetaModel, OPTModel):
     config_class = LlavaOPTConfig
 
     def __init__(self, config: OPTConfig):
-        config.hidden_size = config.d_model
         super(LlavaOPTModel, self).__init__(config)
-    
-    def embed_tokens(self, x):
-        return self.wte(x)
 
 
 class LlavaOPTForCausalLM(OPTForCausalLM, LlavaMetaForCausalLM):
