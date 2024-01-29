@@ -62,7 +62,6 @@ class LlavaOPTForCausalLM(OPTForCausalLM, LlavaMetaForCausalLM):
         self,
         input_ids: torch.LongTensor = None,
         attention_mask: Optional[torch.Tensor] = None,
-        position_ids: Optional[torch.LongTensor] = None,
         past_key_values: Optional[List[torch.FloatTensor]] = None,
         inputs_embeds: Optional[torch.FloatTensor] = None,
         labels: Optional[torch.LongTensor] = None,
@@ -76,14 +75,14 @@ class LlavaOPTForCausalLM(OPTForCausalLM, LlavaMetaForCausalLM):
         if inputs_embeds is None:
             (
                 input_ids,
-                position_ids,
+                _,
                 attention_mask,
                 past_key_values,
                 inputs_embeds,
                 labels
             ) = self.prepare_inputs_labels_for_multimodal(
                 input_ids,
-                position_ids,
+                None,
                 attention_mask,
                 past_key_values,
                 labels,
@@ -93,7 +92,6 @@ class LlavaOPTForCausalLM(OPTForCausalLM, LlavaMetaForCausalLM):
         return super().forward(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            position_ids=position_ids,
             past_key_values=past_key_values,
             inputs_embeds=inputs_embeds,
             labels=labels,
