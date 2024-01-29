@@ -36,7 +36,7 @@
 #     --lazy_preprocess True \
 #     --report_to wandb
 
-deepspeed --include "localhost:2,3,4,5" llava/train/train.py \
+deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --deepspeed ./scripts/zero3.json \
     --model_name_or_path facebook/opt-125m \
     --version opt \
@@ -55,7 +55,7 @@ deepspeed --include "localhost:2,3,4,5" llava/train/train.py \
     --num_train_epochs 1 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 4 \
-    --gradient_accumulation_steps 4 \
+    --gradient_accumulation_steps 1 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
     --save_steps 50000 \
