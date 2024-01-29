@@ -36,22 +36,22 @@
 
 deepspeed --include "localhost:2,3,4,5" llava/train/train.py \
     --deepspeed ./scripts/zero2.json \
-    --model_name_or_path TinyLlama/TinyLlama-1.1B-Chat-V1.0 \
+    --model_name_or_path facebook/opt-125m \
     --version plain \
     --data_path ./playground/data/LLaVA-Pretrain/blip_laion_cc_sbu_558k.json \
     --image_folder ./playground/data/LLaVA-Pretrain/images \
-    --vision_tower openai/clip-vit-large-patch14 \
+    --vision_tower ./ckpts/vit-large-patch14 \
     --mm_projector_type mlp2x_gelu \
     --tune_mm_mlp_adapter True \
     --mm_vision_select_layer -2 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir ./checkpoints/tinyllava-v1.0-1.1b-pretrain \
+    --output_dir ./checkpoints/opt-llava-125m-pretrain \
     --num_train_epochs 1 \
-    --per_device_train_batch_size 32 \
+    --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 4 \
-    --gradient_accumulation_steps 1 \
+    --gradient_accumulation_steps 4 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
     --save_steps 24000 \
