@@ -35,7 +35,11 @@ from llava.model import *
 from llava.mm_utils import tokenizer_image_token
 
 from PIL import Image
-
+try:
+    import flash_attn
+    use_flash_attention_2 =True
+except:
+    use_flash_attention_2 = False
 
 local_rank = None
 
@@ -872,6 +876,13 @@ def train():
                 model_args.model_name_or_path,
                 config=config,
                 cache_dir=training_args.cache_dir,
+                **bnb_model_from_pretrained_args
+            )
+        elif 'opt' in model_args.model_name_or_path:
+            model = LlavaOPTForCausalLM.from_pretrained(
+                model_args.model_name_or_path,
+                cache_dir=training_args.cache_dir,
+                use_flash_attention_2=use_flash_attention_2,
                 **bnb_model_from_pretrained_args
             )
         else:

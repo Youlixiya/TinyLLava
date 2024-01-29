@@ -39,7 +39,7 @@
 deepspeed --include "localhost:2,3,4,5" llava/train/train.py \
     --deepspeed ./scripts/zero3.json \
     --model_name_or_path facebook/opt-125m \
-    --version v1 \
+    --version opt \
     --data_path ./playground/data/llava_v1_5_mix665k.json \
     --image_folder ./playground/data \
     --vision_tower ./ckpts/vit-large-patch14 \
