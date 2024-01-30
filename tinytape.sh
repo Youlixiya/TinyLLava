@@ -34,7 +34,7 @@ deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
 
 deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --lora_enable True --lora_r 128 --lora_alpha 256 --mm_projector_lr 2e-5 \
-    --deepspeed ./scripts/zero3.json \
+    --deepspeed ./scripts/zero2.json \
     --model_name_or_path ./ckpts/TinyLlama-1.1B-Chat-v1.0 \
     --version llava_llama_2 \
     --data_path playground/data/llava_v1_5_mix665k.json+playground/data/Flickr30k_train.json \
@@ -45,7 +45,6 @@ deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --mm_vision_select_layer -1 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
-    --image_aspect_ratio pad \
     --group_by_modality_length True \
     --bf16 True \
     --output_dir ./checkpoints/tinytape-v1.0-1.1b-lora \

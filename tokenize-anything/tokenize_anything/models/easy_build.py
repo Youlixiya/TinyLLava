@@ -36,7 +36,7 @@ def get_device(device_index):
     return torch.device("cpu")
 
 
-def load_weights(module, weights_file, strict=True):
+def load_weights(module, weights_file, strict=False):
     """Load a weights file."""
     if not weights_file:
         return
