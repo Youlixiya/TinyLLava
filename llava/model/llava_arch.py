@@ -94,6 +94,9 @@ class LlavaMetaForCausalLM(ABC):
     def encode_images(self, images):
         image_features = self.get_model().get_vision_tower()(images)
         image_features = self.get_model().mm_projector(image_features)
+        # if 'tap' in self.get_model().get_vision_tower().
+        if image_features.ndim == 4:
+            image_features = image_features.flatten(2).permute(0, 2, 1)
         return image_features
 
     def prepare_inputs_labels_for_multimodal(

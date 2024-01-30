@@ -895,12 +895,20 @@ def train():
                 **bnb_model_from_pretrained_args
             )
         else:
-            model = LlavaLlamaForCausalLM.from_pretrained(
-                model_args.model_name_or_path,
-                cache_dir=training_args.cache_dir,
-                # use_flash_attention_2=use_flash_attention_2
-                **bnb_model_from_pretrained_args
-            )
+            if 'tap' in model_args.vision_tower:
+                model = LlavaTAPLlamaForCausalLM.from_pretrained(
+                    model_args.model_name_or_path,
+                    cache_dir=training_args.cache_dir,
+                    # use_flash_attention_2=use_flash_attention_2
+                    **bnb_model_from_pretrained_args
+                )
+            else:
+                model = LlavaLlamaForCausalLM.from_pretrained(
+                    model_args.model_name_or_path,
+                    cache_dir=training_args.cache_dir,
+                    # use_flash_attention_2=use_flash_attention_2
+                    **bnb_model_from_pretrained_args
+                )
     else:
         model = transformers.LlamaForCausalLM.from_pretrained(
             model_args.model_name_or_path,

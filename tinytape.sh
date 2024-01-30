@@ -4,14 +4,14 @@ deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --version plain \
     --data_path ./playground/data/LLaVA-Pretrain/blip_laion_cc_sbu_558k.json \
     --image_folder ./playground/data/LLaVA-Pretrain/images \
-    --vision_tower ./ckpts/vit-large-patch14 \
-    --mm_projector_type mlp2x_gelu \
+    --vision_tower tap \
+    --mm_projector_type tap \
     --tune_mm_mlp_adapter True \
-    --mm_vision_select_layer -2 \
+    --mm_vision_select_layer -1 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir ./checkpoints/tinyllava-v1.0-1.1b-pretrain \
+    --output_dir ./checkpoints/tinytape-v1.0-1.1b-pretrain \
     --num_train_epochs 1 \
     --per_device_train_batch_size 32 \
     --per_device_eval_batch_size 4 \
@@ -37,18 +37,18 @@ deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --deepspeed ./scripts/zero3.json \
     --model_name_or_path ./ckpts/TinyLlama-1.1B-Chat-v1.0 \
     --version llava_llama_2 \
-    --data_path ./playground/data/llava_v1_5_mix665k.json \
-    --image_folder ./playground/data \
-    --vision_tower ./ckpts/vit-large-patch14 \
-    --pretrain_mm_mlp_adapter ./checkpoints/tinyllava-v1.0-1.1b-pretrain/mm_projector.bin \
-    --mm_projector_type mlp2x_gelu \
-    --mm_vision_select_layer -2 \
+    --data_path playground/data/llava_v1_5_mix665k.json+playground/data/Flickr30k_train.json \
+    --image_folder playground/data+playground/data/flickr30k-images\
+    --vision_tower tap \
+    --pretrain_mm_mlp_adapter ./checkpoints/tinytape-v1.0-1.1b-pretrain/mm_projector.bin \
+    --mm_projector_type tap \
+    --mm_vision_select_layer -1 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --image_aspect_ratio pad \
     --group_by_modality_length True \
     --bf16 True \
-    --output_dir ./checkpoints/tinyllava-v1.0-1.1b-lora \
+    --output_dir ./checkpoints/tinytape-v1.0-1.1b-lora \
     --num_train_epochs 1 \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
