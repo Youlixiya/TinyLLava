@@ -40,7 +40,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             bnb_4bit_quant_type='nf4'
         )
     else:
-        kwargs['torch_dtype'] = torch.bffloat16
+        kwargs['torch_dtype'] = torch.bfloat16
 
     if 'llava' in model_name.lower():
         # Load LLaVA model
@@ -101,6 +101,9 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             if 'mpt' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
                 model = LlavaMPTForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
+            elif 'opt' in model_name.lower():
+                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
+                model = LlavaOPTForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
             else:
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
                 model = LlavaLlamaForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)

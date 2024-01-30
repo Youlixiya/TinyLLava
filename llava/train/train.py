@@ -713,15 +713,23 @@ def preprocess(
 class LazySupervisedDataset(Dataset):
     """Dataset for supervised fine-tuning."""
 
-    def __init__(self, data_path: str,
+    def __init__(self, data_paths: str,
                  tokenizer: transformers.PreTrainedTokenizer,
                  data_args: DataArguments):
         super(LazySupervisedDataset, self).__init__()
-        list_data_dict = json.load(open(data_path, "r"))
+        data_path_list = data_paths.split('+')
+        image_folders = data_args.image_folder.split('+')
+        list_data_dict = []
+        image_folders_list = []
+        for i, data_path in enumerate(data_path_list):
+            data_dict = json.load(open(data_path, "r"))
+            list_data_dict.extend(data_dict)
+            image_folders_list.extend([image_folders[i]] * len(data_dict))
 
         rank0_print("Formatting inputs...Skip in lazy mode")
         self.tokenizer = tokenizer
         self.list_data_dict = list_data_dict
+        self.image_folders_list = image_folders_list
         self.data_args = data_args
 
     def __len__(self):
@@ -751,7 +759,9 @@ class LazySupervisedDataset(Dataset):
         assert len(sources) == 1, "Don't know why it is wrapped to a list"  # FIXME
         if 'image' in sources[0]:
             image_file = self.list_data_dict[i]['image']
-            image_folder = self.data_args.image_folder
+            # image_folder = self.data_args.image_folder
+            image_folder = self.image_folders_list[i]
+            # image_folders_list = 
             processor = self.data_args.image_processor
             image = Image.open(os.path.join(image_folder, image_file)).convert('RGB')
             if self.data_args.image_aspect_ratio == 'pad':
@@ -832,7 +842,7 @@ def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer,
                                 data_args) -> Dict:
     """Make dataset and collator for supervised fine-tuning."""
     train_dataset = LazySupervisedDataset(tokenizer=tokenizer,
-                                data_path=data_args.data_path,
+                                data_paths=data_args.data_path,
                                 data_args=data_args)
     data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
     return dict(train_dataset=train_dataset,
@@ -888,6 +898,7 @@ def train():
             model = LlavaLlamaForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
                 cache_dir=training_args.cache_dir,
+                # use_flash_attention_2=use_flash_attention_2
                 **bnb_model_from_pretrained_args
             )
     else:

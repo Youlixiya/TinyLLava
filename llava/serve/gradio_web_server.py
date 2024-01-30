@@ -177,6 +177,8 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
                     template_name = "llava_v1"
             elif "mpt" in model_name.lower():
                 template_name = "mpt"
+            elif 'opt' in model_name.lower():
+                template_name = "opt"
             else:
                 if 'mmtag' in model_name.lower():
                     template_name = "v0_mmtag"
@@ -444,7 +446,7 @@ def build_demo(embed_mode):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--host", type=str, default="0.0.0.0")
+    parser.add_argument("--host", type=str, default="127.0.0.1")
     parser.add_argument("--port", type=int)
     parser.add_argument("--controller-url", type=str, default="http://localhost:21001")
     parser.add_argument("--concurrency-count", type=int, default=10)

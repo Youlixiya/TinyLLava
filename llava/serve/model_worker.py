@@ -139,9 +139,9 @@ class ModelWorker:
                 images = process_images(images, image_processor, model.config)
 
                 if type(images) is list:
-                    images = [image.to(self.model.device, dtype=torch.float16) for image in images]
+                    images = [image.to(self.model.device, dtype=self.model.dtype) for image in images]
                 else:
-                    images = images.to(self.model.device, dtype=torch.float16)
+                    images = images.to(self.model.device, dtype=self.model.dtype)
 
                 replace_token = DEFAULT_IMAGE_TOKEN
                 if getattr(self.model.config, 'mm_use_im_start_end', False):

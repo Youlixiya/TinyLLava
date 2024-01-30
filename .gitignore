@@ -23,6 +23,7 @@ wandb
 output
 
 checkpoints
+.checkpoints
 ckpts*
 
 .ipynb_checkpoints
@@ -41,7 +42,11 @@ playground/data/ocr_vqa
 playground/data/textvqa
 playground/data/vg
 playground/data/llava_v1_5_mix665k.json
+playground/data/flickr30k-images
+playground/data/Flickr30k_train.json
 *.pt
 transformers
 model_state_dict.bin
 mmdetection
+serve_images/*
+checkpoints/tinyllava-v1.0-1.1b-rec
