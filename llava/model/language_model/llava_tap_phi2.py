@@ -19,33 +19,31 @@ import torch
 import torch.nn as nn
 
 from transformers import AutoConfig, AutoModelForCausalLM, \
-                         LlamaConfig, LlamaModel, LlamaForCausalLM
+                         PhiConfig, PhiModel, PhiForCausalLM
 
 from transformers.modeling_outputs import CausalLMOutputWithPast
 
 from ..llava_arch import LlavaMetaModel, LlavaMetaForCausalLM
 
 
-class LlavaConfig(LlamaConfig):
-    model_type = "llava_llama"
+class LlavaTAPPhi2Config(PhiConfig):
+    model_type = "llava_tap_phi2"
 
 
-class LlavaLlamaModel(LlavaMetaModel, LlamaModel):
-    config_class = LlavaConfig
+class LlavaTAPPhi2Model(LlavaMetaModel, PhiModel):
+    config_class = LlavaTAPPhi2Config
 
-    def __init__(self, config: LlamaConfig):
-        super(LlavaLlamaModel, self).__init__(config)
+    def __init__(self, config: PhiConfig):
+        super(LlavaTAPPhi2Model, self).__init__(config)
 
 
-class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
-    config_class = LlavaConfig
+class LlavaTAPPhi2ForCausalLM(PhiForCausalLM, LlavaMetaForCausalLM):
+    config_class = LlavaTAPPhi2Config
 
     def __init__(self, config):
-        super(LlamaForCausalLM, self).__init__(config)
-        self.model = LlavaLlamaModel(config)
-        self.pretraining_tp = config.pretraining_tp
-        self.vocab_size = config.vocab_size
-        self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
+        super(PhiForCausalLM, self).__init__(config)
+        self.model = LlavaTAPPhi2Model(config)
+        self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=True)
 
         # Initialize weights and apply final processing
         self.post_init()
@@ -107,5 +105,5 @@ class LlavaLlamaForCausalLM(LlamaForCausalLM, LlavaMetaForCausalLM):
             _inputs['images'] = images
         return _inputs
 
-AutoConfig.register("llava_llama", LlavaConfig)
-AutoModelForCausalLM.register(LlavaConfig, LlavaLlamaForCausalLM)
+AutoConfig.register("llava_tap_phi2", LlavaTAPPhi2Config)
+AutoModelForCausalLM.register(LlavaTAPPhi2Config, LlavaTAPPhi2ForCausalLM)

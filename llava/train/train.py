@@ -892,21 +892,37 @@ def train():
             model = LlavaOPTForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
                 cache_dir=training_args.cache_dir,
+                use_flash_attention_2=use_flash_attention_2,
                 **bnb_model_from_pretrained_args
             )
+        elif 'phi2' in model_args.model_name_or_path:
+            if 'tap' in model_args.vision_tower:
+                model = LlavaTAPPhi2ForCausalLM.from_pretrained(
+                    model_args.model_name_or_path,
+                    cache_dir=training_args.cache_dir,
+                    use_flash_attention_2=use_flash_attention_2,
+                    **bnb_model_from_pretrained_args
+                )
+            else:
+                model = LlavaPhi2ForCausalLM.from_pretrained(
+                    model_args.model_name_or_path,
+                    cache_dir=training_args.cache_dir,
+                    use_flash_attention_2=use_flash_attention_2,
+                    **bnb_model_from_pretrained_args
+                )
         else:
             if 'tap' in model_args.vision_tower:
                 model = LlavaTAPLlamaForCausalLM.from_pretrained(
                     model_args.model_name_or_path,
                     cache_dir=training_args.cache_dir,
-                    # use_flash_attention_2=use_flash_attention_2
+                    use_flash_attention_2=use_flash_attention_2,
                     **bnb_model_from_pretrained_args
                 )
             else:
                 model = LlavaLlamaForCausalLM.from_pretrained(
                     model_args.model_name_or_path,
                     cache_dir=training_args.cache_dir,
-                    # use_flash_attention_2=use_flash_attention_2
+                    use_flash_attention_2=use_flash_attention_2,
                     **bnb_model_from_pretrained_args
                 )
     else:

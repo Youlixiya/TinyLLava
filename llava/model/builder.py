@@ -21,14 +21,18 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, BitsAn
 import torch
 from llava.model import *
 from llava.constants import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
-
+try:
+    import flash_attn
+    use_flash_attention_2 =True
+except:
+    use_flash_attention_2 = False
 
 def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map="auto", device="cuda", **kwargs):
     kwargs = {"device_map": device_map, **kwargs}
 
     if device != "cuda":
         kwargs['device_map'] = {"": device}
-
+    kwargs['use_flash_attention_2'] = use_flash_attention_2
     if load_8bit:
         kwargs['load_in_8bit'] = True
     elif load_4bit:
@@ -104,9 +108,16 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             elif 'opt' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
                 model = LlavaOPTForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
-            elif 'tape' in model_name.lower():
+            elif 'tape' in model_name.lower() and 'llama' in model_name.lower():
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
                 model = LlavaTAPLlamaForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
+            elif 'phi2' in model_name.lower():
+                if 'tape' in model_name.lower():
+                    tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
+                    model = LlavaTAPPhi2ForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
+                else:
+                    tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
+                    model = LlavaPhi2ForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
             else:
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
                 model = LlavaLlamaForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
