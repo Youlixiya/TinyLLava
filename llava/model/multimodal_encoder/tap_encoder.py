@@ -36,11 +36,18 @@ class TAPImageProcessor(LlavaTAPLlamaModel):
             ]
         )
 
-    def __call__(self, item):
-        return self.transform(item)
+    def __call__(self, images, return_tensors='pt'):
+        return self.preprocess(images, return_tensors)
     
-    def preprocess(self, image, return_tensors='pt'):
-        return {'pixel_values':self(image)[None]}
+    def preprocess(self, images, return_tensors='pt'):
+        images_tensor = []
+        if type(images) == list:
+            for image in images:
+                images_tensor.append(self.transform(image))
+            images_tensor = torch.stack(images_tensor)
+        else:
+            images_tensor = self.transform(images)[None]
+        return {'pixel_values': images_tensor}
         
 
 class TAPVisionTower(nn.Module):

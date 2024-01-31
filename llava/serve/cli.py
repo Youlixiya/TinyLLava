@@ -54,10 +54,11 @@ def main(args):
     image = load_image(args.image_file)
     # Similar operation in model_worker.py
     image_tensor = process_images([image], image_processor, model.config)
+    print(model.dtype)
     if type(image_tensor) is list:
-        image_tensor = [image.to(model.device, dtype=torch.float16) for image in image_tensor]
+        image_tensor = [image.to(model.device, dtype=model.dtype) for image in image_tensor]
     else:
-        image_tensor = image_tensor.to(model.device, dtype=torch.float16)
+        image_tensor = image_tensor.to(model.device, dtype=model.dtype)
 
     while True:
         try:
