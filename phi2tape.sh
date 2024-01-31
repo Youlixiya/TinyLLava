@@ -36,7 +36,7 @@ deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --lora_enable True --lora_r 128 --lora_alpha 256 --mm_projector_lr 2e-5 \
     --deepspeed ./scripts/zero2.json \
     --model_name_or_path ./ckpts/phi-2 \
-    --version llava_llama_2 \
+    --version v0 \
     --data_path playground/data/llava_instruct_150k.json+playground/data/Flickr30k_train.json+playground/data/refcoco2_train.json+playground/data/coco_train.json \
     --image_folder playground/data+playground/data/flickr30k-images+playground/data/coco/train2014+playground/data/coco/train2017\
     --vision_tower tap \

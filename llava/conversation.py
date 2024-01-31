@@ -336,6 +336,19 @@ A conversation between a user and an LLM-based AI assistant. The assistant gives
     sep="<|im_end|>",
 )
 
+conv_phi_v0 = Conversation(
+    system="A chat between a curious user and an artificial intelligence assistant. "
+           "The assistant gives helpful, detailed, and polite answers to the user's questions.",
+    roles=("USER", "ASSISTANT"),
+    version="v0",
+    messages=(),
+    offset=0,
+    sep_style=SeparatorStyle.TWO,
+    sep=" ",
+    sep2="<|endoftext|>",
+)
+
+
 conv_llava_plain = Conversation(
     system="",
     roles=("", ""),
@@ -412,6 +425,7 @@ conv_templates = {
     "llava_llama_2": conv_llava_llama_2,
     "opt": conv_llava_opt,
     "mpt": conv_mpt,
+    "phi-2_v0": conv_phi_v0,
 }
 
 
