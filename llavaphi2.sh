@@ -4,14 +4,14 @@ deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --version plain \
     --data_path ./playground/data/LLaVA-Pretrain/blip_laion_cc_sbu_558k.json \
     --image_folder ./playground/data/LLaVA-Pretrain/images \
-    --vision_tower tap \
-    --mm_projector_type tap \
+    --vision_tower ./ckpts/clip-vit-large-patch14-336 \
+    --mm_projector_type mlp2x_gelu \
     --tune_mm_mlp_adapter True \
-    --mm_vision_select_layer -1 \
+    --mm_vision_select_layer -2 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir ./checkpoints/phi2tape-llava-v0-3b-pretrain \
+    --output_dir ./checkpoints/llavaPhi-v0-3b-pretrain \
     --num_train_epochs 1 \
     --per_device_train_batch_size 16 \
     --per_device_eval_batch_size 4 \

@@ -44,6 +44,8 @@ playground/data/vg
 playground/data/llava_v1_5_mix665k.json
 playground/data/flickr30k-images
 playground/data/Flickr30k_train.json
+playground/data/refcoco3_train.json
+playground/data/coco_train.json
 *.pt
 transformers
 model_state_dict.bin

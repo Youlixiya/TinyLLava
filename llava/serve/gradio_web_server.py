@@ -168,6 +168,8 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
         if "llava" in model_name.lower():
             if 'llama-2' in model_name.lower():
                 template_name = "llava_llama_2"
+            elif "v0" in  model_name.lower():
+                template_name = "phi-2_v0"
             elif "v1" in model_name.lower():
                 if 'mmtag' in model_name.lower():
                     template_name = "v1_mmtag"
