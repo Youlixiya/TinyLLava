@@ -37,7 +37,7 @@ from llava.mm_utils import tokenizer_image_token
 from PIL import Image
 try:
     import flash_attn
-    use_flash_attention_2 =False
+    use_flash_attention_2 =True
 except:
     use_flash_attention_2 = False
 

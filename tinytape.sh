@@ -37,8 +37,8 @@ deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --deepspeed ./scripts/zero2.json \
     --model_name_or_path ./ckpts/TinyLlama-1.1B-Chat-v1.0 \
     --version llava_llama_2 \
-    --data_path playground/data/llava_v1_5_mix665k.json+playground/data/Flickr30k_train.json \
-    --image_folder playground/data+playground/data/flickr30k-images\
+    --data_path playground/data/llava_v1_5_mix665k.json+playground/data/Flickr30k_train.json+playground/data/coco_train.json \
+    --image_folder playground/data+playground/data/flickr30k-images+playground/data/coco/train2017 \
     --vision_tower tap \
     --pretrain_mm_mlp_adapter ./checkpoints/tinytape-llava-llama-2-v1.0-1.1b-pretrain/mm_projector.bin \
     --mm_projector_type tap \
