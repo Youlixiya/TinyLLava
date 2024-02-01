@@ -37,7 +37,7 @@ from llava.mm_utils import tokenizer_image_token
 from PIL import Image
 try:
     import flash_attn
-    use_flash_attention_2 =True
+    use_flash_attention_2 =False
 except:
     use_flash_attention_2 = False
 
@@ -943,7 +943,6 @@ def train():
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     local_rank = training_args.local_rank
     compute_dtype = (torch.float16 if training_args.fp16 else (torch.bfloat16 if training_args.bf16 else torch.float32))
-
     bnb_model_from_pretrained_args = {}
     if training_args.bits in [4, 8]:
         from transformers import BitsAndBytesConfig
@@ -968,22 +967,27 @@ def train():
             model = LlavaOPTForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
                 cache_dir=training_args.cache_dir,
+                torch_dtype=compute_dtype,
                 use_flash_attention_2=use_flash_attention_2,
                 **bnb_model_from_pretrained_args
             )
-        elif 'phi2' in model_args.model_name_or_path:
+        elif 'phi' in model_args.model_name_or_path:
             if 'tap' in model_args.vision_tower:
                 model = LlavaTAPPhi2ForCausalLM.from_pretrained(
                     model_args.model_name_or_path,
                     cache_dir=training_args.cache_dir,
+                    torch_dtype=compute_dtype,
                     use_flash_attention_2=use_flash_attention_2,
+                    trust_remote_code=True,
                     **bnb_model_from_pretrained_args
                 )
             else:
                 model = LlavaPhi2ForCausalLM.from_pretrained(
                     model_args.model_name_or_path,
                     cache_dir=training_args.cache_dir,
+                    torch_dtype=compute_dtype,
                     use_flash_attention_2=use_flash_attention_2,
+                    trust_remote_code=True,
                     **bnb_model_from_pretrained_args
                 )
         else:
@@ -991,20 +995,27 @@ def train():
                 model = LlavaTAPLlamaForCausalLM.from_pretrained(
                     model_args.model_name_or_path,
                     cache_dir=training_args.cache_dir,
+                    torch_dtype=compute_dtype,
                     use_flash_attention_2=use_flash_attention_2,
+                    trust_remote_code=True,
                     **bnb_model_from_pretrained_args
                 )
             else:
                 model = LlavaLlamaForCausalLM.from_pretrained(
                     model_args.model_name_or_path,
                     cache_dir=training_args.cache_dir,
+                    torch_dtype=compute_dtype,
                     use_flash_attention_2=use_flash_attention_2,
+                    trust_remote_code=True,
                     **bnb_model_from_pretrained_args
                 )
     else:
         model = transformers.LlamaForCausalLM.from_pretrained(
             model_args.model_name_or_path,
+            torch_dtype=compute_dtype,
             cache_dir=training_args.cache_dir,
+            use_flash_attention_2=use_flash_attention_2,
+            trust_remote_code=True,
             **bnb_model_from_pretrained_args
         )
     model.config.use_cache = False
@@ -1043,7 +1054,7 @@ def train():
         rank0_print("Adding LoRA adapters...")
         model = get_peft_model(model, lora_config)
 
-    if 'mpt' in model_args.model_name_or_path:
+    if 'phi' in model_args.model_name_or_path:
         tokenizer = transformers.AutoTokenizer.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
@@ -1060,19 +1071,23 @@ def train():
         )
 
     if model_args.version == "v0":
-        if tokenizer.pad_token is None:
-            smart_tokenizer_and_embedding_resize(
-                special_tokens_dict=dict(pad_token="[PAD]"),
-                tokenizer=tokenizer,
-                model=model,
-            )
-    elif model_args.version == "v0.5":
+        # if tokenizer.pad_token is None:
+        #     smart_tokenizer_and_embedding_resize(
+        #         special_tokens_dict=dict(pad_token="[PAD]"),
+        #         tokenizer=tokenizer,
+        #         model=model,
+        #     )
         tokenizer.pad_token = tokenizer.unk_token
+    if model_args.version == "v0.5":
+        tokenizer.pad_token = tokenizer.unk_token
+    # else:
+    if model_args.version != "opt":
+        tokenizer.pad_token = tokenizer.unk_token
+    if model_args.version in conversation_lib.conv_templates:
+        conversation_lib.default_conversation = conversation_lib.conv_templates[model_args.version]
     else:
-        if model_args.version != "opt":
-            tokenizer.pad_token = tokenizer.unk_token
-        if model_args.version in conversation_lib.conv_templates:
-            conversation_lib.default_conversation = conversation_lib.conv_templates[model_args.version]
+        if model_args.version == "v0" and 'phi' in model_args.model_name_or_path:
+            conversation_lib.default_conversation = conversation_lib.conv_templates["phi-2_v0"]
         else:
             conversation_lib.default_conversation = conversation_lib.conv_templates["vicuna_v1"]
 

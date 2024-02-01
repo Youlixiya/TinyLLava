@@ -31,14 +31,15 @@ deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --dataloader_num_workers 4 \
     --lazy_preprocess True \
     --report_to wandb
-
+# --data_path playground/data/llava_instruct_150k.json+playground/data/Flickr30k_train.json+playground/data/refcoco3_train.json+playground/data/coco_train.json \
+#     --image_folder playground/data/coco/train2017+playground/data/flickr30k-images+playground/data/coco/train2014+playground/data/coco/train2017 \
 deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --lora_enable True --lora_r 128 --lora_alpha 256 --mm_projector_lr 2e-5 \
     --deepspeed ./scripts/zero2.json \
     --model_name_or_path ./ckpts/phi-2 \
     --version v0 \
-    --data_path playground/data/llava_instruct_150k.json+playground/data/Flickr30k_train.json+playground/data/refcoco2_train.json+playground/data/coco_train.json \
-    --image_folder playground/data+playground/data/flickr30k-images+playground/data/coco/train2014+playground/data/coco/train2017\
+    --data_path playground/data/llava_instruct_150k.json+playground/data/Flickr30k_train.json+playground/data/coco_train.json \
+    --image_folder playground/data/coco/train2017+playground/data/flickr30k-images+playground/data/coco/train2017 \
     --vision_tower tap \
     --pretrain_mm_mlp_adapter ./checkpoints/phi2tape-llava-v0-3b-pretrain/mm_projector.bin \
     --mm_projector_type tap \
@@ -68,9 +69,9 @@ deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --lazy_preprocess True \
     --report_to wandb
 
-python scripts/merge_lora_weights.py --model-path ./checkpoints/tinytape-llava-llama-2-v1.0-1.1b-lora \
-                                  --model-base ./ckpts/TinyLlama-1.1B-Chat-v1.0 \
-                                  --save-model-path ./checkpoints/tinytape-llava-llama-2-v1.0-1.1b
+python scripts/merge_lora_weights.py --model-path ./checkpoints/phi2tape-llava-v0-3b-lora \
+                                  --model-base ./ckpts/phi-2 \
+                                  --save-model-path ./checkpoints/phi2tape-llava-v0-3b
 
 deepspeed --include "localhost:0,1,2,3,4,5,6,7" llava/train/train.py \
     --lora_enable True --lora_r 128 --lora_alpha 256 --mm_projector_lr 2e-5 \

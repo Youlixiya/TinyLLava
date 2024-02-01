@@ -40,9 +40,9 @@ class LlavaTAPPhi2Model(LlavaMetaModel, PhiModel):
 class LlavaTAPPhi2ForCausalLM(PhiForCausalLM, LlavaMetaForCausalLM):
     config_class = LlavaTAPPhi2Config
 
-    def __init__(self, config):
-        super(PhiForCausalLM, self).__init__(config)
-        self.model = LlavaTAPPhi2Model(config)
+    def __init__(self, config, *model_args, **model_kwargs):
+        super(PhiForCausalLM, self).__init__(config, *model_args, **model_kwargs)
+        self.model = LlavaTAPPhi2Model(config, *model_args, **model_kwargs)
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=True)
 
         # Initialize weights and apply final processing

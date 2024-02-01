@@ -25,7 +25,7 @@ from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_S
 from transformers import TextIteratorStreamer, AutoConfig
 from threading import Thread
 
-AutoConfig.register('llava', LlavaConfig)
+# AutoConfig.register('llava', LlavaConfig)
 
 
 GB = 1 << 30
