@@ -3,7 +3,7 @@ import torch.nn as nn
 from torchvision import transforms
 from torchvision.transforms.functional import InterpolationMode
 # from tokenize_anything import model_registry
-from .tap_image_encoder import tap_vit_b_encoder, tap_vit_l_encoder
+from edge_sam import SamPredictor, sam_model_registry
 class BaseProcessor:
     def __init__(self):
         self.transform = lambda x: x
@@ -21,7 +21,7 @@ class BaseImageProcessor(BaseProcessor):
 
         self.normalize = transforms.Normalize(mean, std)
 
-class TAPImageProcessor(BaseImageProcessor):
+class SAMImageProcessor(BaseImageProcessor):
     def __init__(self, image_size=1024, mean=None, std=None):
         super().__init__(mean=mean, std=std)
         self.crop_size = {'height':image_size,
@@ -50,14 +50,12 @@ class TAPImageProcessor(BaseImageProcessor):
         return {'pixel_values': images_tensor}
         
 
-class TAPVisionTower(nn.Module):
+class SAMVisionTower(nn.Module):
     hidden_size=256
     num_patches=4096
     image_size=1024
-    # tap_model_type='tap_vit_b'
-    tap_image_encoder_checkpoint='./ckpts/tap/tap_b_image_encoder.pt'
-    # tap_checkpoint='./ckpts/tap/tap_vit_b_b45cbf.pkl'
-    # concept_weights='./ckpts/tap/merged_2560.pkl'
+    sam_model_type='edge_sam'
+    sam_checkpoint='./ckpts/sam/edge_sam_3x.pth'
     def __init__(self, vision_tower, args, delay_load=False):
         super().__init__()
 
@@ -76,12 +74,13 @@ class TAPVisionTower(nn.Module):
             self.load_model()
 
     def load_model(self):
-        self.image_processor = TAPImageProcessor(image_size=self.image_size)
+        self.image_processor = SAMImageProcessor(image_size=self.image_size)
         # self.tap = model_registry[self.tap_model_type](checkpoint=self.tap_checkpoint)
         # self.tap.concept_projector.reset_weights(self.concept_weights)
         # self.tap.text_decoder.reset_cache(max_batch_size=8)
-        self.vision_tower = tap_vit_b_encoder()
-        self.vision_tower.load_state_dict(torch.load(self.tap_image_encoder_checkpoint))
+        self.sam = sam_model_registry[self.sam_model_type](checkpoint=self.sam_checkpoint)
+        self.vision_tower = self.sam.image_encoder
+        self.sam.requires_grad_(False)
         self.vision_tower.requires_grad_(False)
 
         self.is_loaded = True
@@ -101,11 +100,11 @@ class TAPVisionTower(nn.Module):
         if type(images) is list:
             image_features = []
             for image in images:
-                image_feature = self.vision_tower(image.to(device=self.device, dtype=self.dtype).unsqueeze(0))[0]
+                image_feature = self.vision_tower(image.to(device=self.device, dtype=self.dtype).unsqueeze(0))
                 # image_feature = self.feature_select(image_forward_out).to(image.dtype)
                 image_features.append(image_feature)
         else:
-            image_features = self.vision_tower(images.to(device=self.device, dtype=self.dtype))[0]
+            image_features = self.vision_tower(images.to(device=self.device, dtype=self.dtype))
             # image_features = self.feature_select(image_forward_outs).to(images.dtype)
 
         return image_features
@@ -116,11 +115,11 @@ class TAPVisionTower(nn.Module):
 
     @property
     def dtype(self):
-        return self.vision_tower.patch_embed.proj.weight.data.dtype
+        return self.vision_tower.features[0][0].c.weight.data.dtype
 
     @property
     def device(self):
-        return self.vision_tower.patch_embed.proj.weight.data.device
+        return self.vision_tower.features[0][0].c.weight.data.device
 
     @property
     def config(self):

@@ -3,3 +3,4 @@ from .language_model.llava_opt import LlavaOPTForCausalLM, LlavaOPTConfig
 from .language_model.llava_tap_llama import LlavaTAPLlamaForCausalLM, LlavaTAPConfig
 from .language_model.llava_phi2 import LlavaPhi2ForCausalLM, LlavaPhi2Config
 from .language_model.llava_tap_phi2 import LlavaTAPPhi2ForCausalLM, LlavaTAPPhi2Config
+from .language_model.llava_sam_llama import LlavaSAMLlamaForCausalLM, LlavaSAMConfig

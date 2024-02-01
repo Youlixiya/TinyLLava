@@ -1000,6 +1000,15 @@ def train():
                     trust_remote_code=True,
                     **bnb_model_from_pretrained_args
                 )
+            elif 'sam' in model_args.vision_tower:
+                model = LlavaSAMLlamaForCausalLM.from_pretrained(
+                    model_args.model_name_or_path,
+                    cache_dir=training_args.cache_dir,
+                    torch_dtype=compute_dtype,
+                    use_flash_attention_2=use_flash_attention_2,
+                    trust_remote_code=True,
+                    **bnb_model_from_pretrained_args
+                )
             else:
                 model = LlavaLlamaForCausalLM.from_pretrained(
                     model_args.model_name_or_path,
